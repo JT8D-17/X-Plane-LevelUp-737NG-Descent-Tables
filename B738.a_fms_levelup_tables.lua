@@ -1,7 +1,7 @@
 --[[
 
 VNAV DESCENT TABLES FOR THE LEVELUP 737NG SERIES BY WAHLTHO & RANDOMUSER
-Generated: 2026-06-29 15:51:27 UTC
+Generated: 2026-06-29 18:59:32 UTC
 
 ]]
 
@@ -230,21 +230,32 @@ function B738_variant_test_clamp(value, lo, hi)
 	return value
 end
 
+function B738_variant_test_round(value)
+	return math.floor(value + 0.5)
+end
+
+function B738_variant_test_in_range(value, lo, hi)
+	return value >= lo and value <= hi
+end
+
 function B738_variant_test_schedule_model()
 	local variant_id = B738_variant_test_active_variant()
 	if variant_id == nil then
 		return nil, nil
 	end
 
-	local cruise_mach = B738DR_fmc_descent_speed_mach
-	local descent_kias = B738DR_fmc_descent_speed
-	local low_restriction = B738DR_fmc_descent_r_speed1
+	local cruise_mach = B738_variant_test_round(B738DR_fmc_descent_speed_mach * 1000)
+	local descent_kias = B738_variant_test_round(B738DR_fmc_descent_speed)
+	local low_restriction = B738_variant_test_round(B738DR_fmc_descent_r_speed1)
 
-	if cruise_mach >= 0.77 and cruise_mach <= 0.79 and descent_kias >= 270 and descent_kias <= 305 and (low_restriction == 0 or (low_restriction >= 230 and low_restriction <= 260)) then
+	if B738_variant_test_in_range(cruise_mach, 770, 795) and
+		B738_variant_test_in_range(descent_kias, 270, 310) and
+		(low_restriction == 0 or B738_variant_test_in_range(low_restriction, 230, 260)) then
 		return variant_id, 'direct_078_280_250'
 	end
 
-	if cruise_mach >= 0.75 and cruise_mach <= 0.77 and descent_kias >= 265 and descent_kias <= 305 then
+	if B738_variant_test_in_range(cruise_mach, 750, 770) and
+		B738_variant_test_in_range(descent_kias, 265, 310) then
 		return variant_id, 'derived_076_280'
 	end
 
@@ -357,18 +368,27 @@ function B738_variant_test_derived_segment(model, low_alt, high_alt)
 	return segment
 end
 
-function B738_variant_test_can_use_kias_segment(model_id, speed_kias, high_alt)
+function B738_variant_test_can_use_kias_segment(model_id, speed_kias)
+	local rounded_speed_kias = B738_variant_test_round(speed_kias)
 	if model_id == 'derived_076_280' then
-		return speed_kias >= 265 and speed_kias <= 305
+		return B738_variant_test_in_range(rounded_speed_kias, 265, 310)
 	end
 
 	if model_id == 'direct_078_280_250' then
-		if speed_kias >= 265 and speed_kias <= 305 then
-			return true
-		end
-		if high_alt <= 12000 and speed_kias >= 230 and speed_kias <= 260 then
-			return true
-		end
+		return B738_variant_test_in_range(rounded_speed_kias, 230, 310)
+	end
+
+	return false
+end
+
+function B738_variant_test_can_use_mach_segment(model_id, mach)
+	local mach_x1000 = B738_variant_test_round(mach * 1000)
+	if model_id == 'derived_076_280' then
+		return B738_variant_test_in_range(mach_x1000, 750, 770)
+	end
+
+	if model_id == 'direct_078_280_250' then
+		return B738_variant_test_in_range(mach_x1000, 770, 795)
 	end
 
 	return false
@@ -412,7 +432,7 @@ function B738_variant_test_take_alt_dist(x_idx_alt, x_spd_alt, x_spd_wnd_alt, x_
 	end
 
 	local speed_kias = B738_variant_test_clamp(x_spd_alt, 0, 400)
-	if not B738_variant_test_can_use_kias_segment(model_id, speed_kias, high_alt) then
+	if not B738_variant_test_can_use_kias_segment(model_id, speed_kias) then
 		return nil
 	end
 
@@ -439,10 +459,7 @@ function B738_variant_test_take_alt_dist_mach(x_idx_alt, x_spd_alt, x_spd_wnd_al
 		return nil
 	end
 
-	if model_id == 'derived_076_280' and (x_spd_alt < 0.75 or x_spd_alt > 0.77) then
-		return nil
-	end
-	if model_id == 'direct_078_280_250' and (x_spd_alt < 0.77 or x_spd_alt > 0.79) then
+	if not B738_variant_test_can_use_mach_segment(model_id, x_spd_alt) then
 		return nil
 	end
 

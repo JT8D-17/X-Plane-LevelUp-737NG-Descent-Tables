@@ -1,16 +1,18 @@
 --[[
 
 VNAV DESCENT TABLES FOR THE LEVELUP 737NG SERIES BY WAHLTHO & RANDOMUSER
-Generated: 2026-06-27 20:24:32 UTC
+Generated: 2026-06-29 15:51:27 UTC
 
 ]]
 
--- BEGIN UPSTREAM VARIANT TEST: LevelUp NG VNAV descent prototype
--- Documentation-only experiment. Default Zibo 737-800 behavior falls through unchanged.
--- Goal: source-backed clean descent geometry for LevelUp NG variants using the same data package as the C++ port.
+-- BEGIN UPSTREAM VARIANT TEST: Zibo/LevelUp NG VNAV descent prototype
+-- Documentation-only experiment.
+-- Goal: source-backed clean descent geometry for Zibo 737-800X and LevelUp NG variants using the same data package as the C++ port.
 -- Direct data: Documentation/levelup_vnav_descent_model/direct_descent_distance_tables.csv
 -- Derived data: Documentation/levelup_vnav_descent_model/known_model_data.csv
 -- Missing variant-specific data stays explicit: decel and non-clean flap descent are inherited from original Lua.
+
+B738_variant_test_zibo_800_variant = -1000
 
 -- LevelUp 737-600NG / CFM56-7B22
 raw_table('B738_variant_test_600_direct_alt')
@@ -140,6 +142,15 @@ B738_variant_test_900er_derived_076_280_dist_per_1000 = {
 }
 
 B738_variant_test_models = {
+	[B738_variant_test_zibo_800_variant] = {
+		label = 'Zibo 737-800X / CFM56-7B26',
+		direct_alt = B738_variant_test_800_direct_alt,
+		direct_weight = B738_variant_test_800_direct_weight,
+		direct_078_280_250 = B738_variant_test_800_direct_078_280_250,
+		derived_alt = B738_variant_test_800_derived_076_280_alt,
+		derived_weight = B738_variant_test_800_derived_076_280_weight,
+		derived_076_280 = B738_variant_test_800_derived_076_280_dist_per_1000,
+	},
 	[3] = {
 		label = 'LevelUp 737-600NG / CFM56-7B22',
 		direct_alt = B738_variant_test_600_direct_alt,
@@ -193,10 +204,16 @@ function B738_variant_test_active_variant()
 		if B738_variant_test_models[variant_id] ~= nil then
 			return variant_id
 		end
+		if variant_id < 0 and B738DR_73x ~= nil and B738DR_73x == 0 then
+			return B738_variant_test_zibo_800_variant
+		end
 	end
 
-	-- Legacy upstream Lua fallback kept from the 737-700 prototype. It is only
-	-- used when the LevelUp b737_variant dataref is not present.
+	-- Legacy upstream Lua fallback used when the LevelUp b737_variant dataref is
+	-- not present.
+	if B738DR_b737_variant == nil and B738DR_73x ~= nil and B738DR_73x == 0 then
+		return B738_variant_test_zibo_800_variant
+	end
 	if B738DR_b737_variant == nil and B738DR_73x ~= nil and B738DR_73x == 2 then
 		return 2
 	end
@@ -223,11 +240,11 @@ function B738_variant_test_schedule_model()
 	local descent_kias = B738DR_fmc_descent_speed
 	local low_restriction = B738DR_fmc_descent_r_speed1
 
-	if cruise_mach >= 0.77 and cruise_mach <= 0.79 and descent_kias >= 270 and descent_kias <= 290 and (low_restriction == 0 or (low_restriction >= 230 and low_restriction <= 260)) then
+	if cruise_mach >= 0.77 and cruise_mach <= 0.79 and descent_kias >= 270 and descent_kias <= 305 and (low_restriction == 0 or (low_restriction >= 230 and low_restriction <= 260)) then
 		return variant_id, 'direct_078_280_250'
 	end
 
-	if cruise_mach >= 0.75 and cruise_mach <= 0.77 and descent_kias >= 265 and descent_kias <= 295 then
+	if cruise_mach >= 0.75 and cruise_mach <= 0.77 and descent_kias >= 265 and descent_kias <= 305 then
 		return variant_id, 'derived_076_280'
 	end
 
@@ -342,11 +359,11 @@ end
 
 function B738_variant_test_can_use_kias_segment(model_id, speed_kias, high_alt)
 	if model_id == 'derived_076_280' then
-		return speed_kias >= 265 and speed_kias <= 295
+		return speed_kias >= 265 and speed_kias <= 305
 	end
 
 	if model_id == 'direct_078_280_250' then
-		if speed_kias >= 265 and speed_kias <= 295 then
+		if speed_kias >= 265 and speed_kias <= 305 then
 			return true
 		end
 		if high_alt <= 12000 and speed_kias >= 230 and speed_kias <= 260 then
@@ -445,7 +462,7 @@ function B738_variant_test_take_alt_dist_mach(x_idx_alt, x_spd_alt, x_spd_wnd_al
 	end
 	return B738_variant_test_wind_correct(segment, x_spd_wnd_alt, high_alt)
 end
--- END UPSTREAM VARIANT TEST: LevelUp NG VNAV descent prototype
+-- END UPSTREAM VARIANT TEST: Zibo/LevelUp NG VNAV descent prototype
 
 --[[END OF FILE]]
 print("LevelUp VNAV descent tables loaded!")

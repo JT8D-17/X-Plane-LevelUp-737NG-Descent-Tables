@@ -1,7 +1,7 @@
 --[[
 
 VNAV DESCENT TABLES FOR THE LEVELUP 737NG SERIES BY WAHLTHO & RANDOMUSER
-Generated: 2026-06-29 18:59:32 UTC
+Generated: 2026-07-01 16:56:15 UTC
 
 ]]
 
@@ -238,6 +238,10 @@ function B738_variant_test_in_range(value, lo, hi)
 	return value >= lo and value <= hi
 end
 
+function B738_variant_test_low_restriction_supported(low_restriction)
+	return low_restriction == 0 or B738_variant_test_in_range(low_restriction, 230, 260)
+end
+
 function B738_variant_test_schedule_model()
 	local variant_id = B738_variant_test_active_variant()
 	if variant_id == nil then
@@ -250,7 +254,13 @@ function B738_variant_test_schedule_model()
 
 	if B738_variant_test_in_range(cruise_mach, 770, 795) and
 		B738_variant_test_in_range(descent_kias, 270, 310) and
-		(low_restriction == 0 or B738_variant_test_in_range(low_restriction, 230, 260)) then
+		B738_variant_test_low_restriction_supported(low_restriction) then
+		return variant_id, 'direct_078_280_250'
+	end
+
+	if B738_variant_test_in_range(cruise_mach, 650, 749) and
+		B738_variant_test_in_range(descent_kias, 230, 310) and
+		B738_variant_test_low_restriction_supported(low_restriction) then
 		return variant_id, 'direct_078_280_250'
 	end
 

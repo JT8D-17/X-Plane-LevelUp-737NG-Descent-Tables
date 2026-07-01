@@ -1,6 +1,6 @@
 --- B738.a_fms.lua
 +++ B738.a_fms.lua
-@@ -302,6 +302,482 @@
+@@ -302,6 +302,492 @@
  							
  
  ci_clb_tab_n = 10
@@ -237,6 +237,10 @@
 +	return value >= lo and value <= hi
 +end
 +
++function B738_variant_test_low_restriction_supported(low_restriction)
++	return low_restriction == 0 or B738_variant_test_in_range(low_restriction, 230, 260)
++end
++
 +function B738_variant_test_schedule_model()
 +	local variant_id = B738_variant_test_active_variant()
 +	if variant_id == nil then
@@ -249,7 +253,13 @@
 +
 +	if B738_variant_test_in_range(cruise_mach, 770, 795) and
 +		B738_variant_test_in_range(descent_kias, 270, 310) and
-+		(low_restriction == 0 or B738_variant_test_in_range(low_restriction, 230, 260)) then
++		B738_variant_test_low_restriction_supported(low_restriction) then
++		return variant_id, 'direct_078_280_250'
++	end
++
++	if B738_variant_test_in_range(cruise_mach, 650, 749) and
++		B738_variant_test_in_range(descent_kias, 230, 310) and
++		B738_variant_test_low_restriction_supported(low_restriction) then
 +		return variant_id, 'direct_078_280_250'
 +	end
 +
@@ -483,7 +493,7 @@
  raw_table('ci_clb_tab')
  ci_clb_tab = {0, 20, 40, 60, 80, 100, 120, 140, 160, 180}
  raw_table('ci_clb_ias1')
-@@ -153107,6 +153583,10 @@
+@@ -153107,6 +153593,10 @@
  	
  	local altitude_distance = 0
  	local x_speed = 0
@@ -494,7 +504,7 @@
  	
  	local faf_spd = B738DR_fms_vref_40
  	
-@@ -153174,6 +153654,10 @@
+@@ -153174,6 +153664,10 @@
  function take_alt_dist_mach(x_idx_alt, x_spd_alt, x_spd_wnd_alt)
  	
  	local altitude_distance = 0

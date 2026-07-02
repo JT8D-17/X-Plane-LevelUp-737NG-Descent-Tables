@@ -4,3 +4,5 @@
 *.patch text eol=lf
 *.py text eol=lf
 *.txt text eol=lf
+*.sha256 text eol=lf
+*.zip binary

@@ -27,18 +27,9 @@ jobs:
             B738.a_fms_levelup_tables.lua \
             Add_to_take_alt_dist.txt \
             Add_to_take_alt_dist_mach.txt
-          zip -X -j dist/levelup-vnav-descent-installer-levelup-only.zip \
-            levelup_only/README.md \
-            levelup_only/z_Install.py \
-            levelup_only/B738.a_fms_levelup_tables.lua \
-            levelup_only/Add_to_take_alt_dist.txt \
-            levelup_only/Add_to_take_alt_dist_mach.txt
           sha256sum dist/levelup-vnav-descent-installer.zip > dist/levelup-vnav-descent-installer.zip.sha256
-          sha256sum dist/levelup-vnav-descent-installer-levelup-only.zip > dist/levelup-vnav-descent-installer-levelup-only.zip.sha256
           unzip -l dist/levelup-vnav-descent-installer.zip
-          unzip -l dist/levelup-vnav-descent-installer-levelup-only.zip
           cat dist/levelup-vnav-descent-installer.zip.sha256
-          cat dist/levelup-vnav-descent-installer-levelup-only.zip.sha256
 
       - name: Upload workflow artifact
         uses: actions/upload-artifact@v4
@@ -47,8 +38,6 @@ jobs:
           path: |
             dist/levelup-vnav-descent-installer.zip
             dist/levelup-vnav-descent-installer.zip.sha256
-            dist/levelup-vnav-descent-installer-levelup-only.zip
-            dist/levelup-vnav-descent-installer-levelup-only.zip.sha256
           if-no-files-found: error
 
       - name: Attach ZIP to GitHub release
@@ -59,11 +48,9 @@ jobs:
           set -euo pipefail
           tag="${GITHUB_REF_NAME}"
           if ! gh release view "$tag" >/dev/null 2>&1; then
-            gh release create "$tag" --title "$tag" --notes "LevelUp VNAV descent installer $tag"
+            gh release create "$tag" --title "$tag" --notes "LevelUp VNAV descent tables $tag"
           fi
           gh release upload "$tag" \
             dist/levelup-vnav-descent-installer.zip \
             dist/levelup-vnav-descent-installer.zip.sha256 \
-            dist/levelup-vnav-descent-installer-levelup-only.zip \
-            dist/levelup-vnav-descent-installer-levelup-only.zip.sha256 \
             --clobber

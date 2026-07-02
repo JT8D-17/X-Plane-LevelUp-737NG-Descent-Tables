@@ -4,7 +4,7 @@
 
 ## Introduction
 
-This repository provides a do-it-yourself patch kit that adds individual VNAV descent tables to the [LevelUp 737NG (v2)](https://forum.thresholdx.net/files/file/4108-737ng-series-for-x-plane-12/) for X-Plane 12. Any LevelUp 737 release for X-Plane 11 is not supported at all.
+This repository provides a do-it-yourself installer that adds individual VNAV descent tables to the [LevelUp 737NG (v2)](https://forum.thresholdx.net/files/file/4108-737ng-series-for-x-plane-12/) for X-Plane 12. Any LevelUp 737 release for X-Plane 11 is not supported at all.
 
 &nbsp;
 
@@ -12,9 +12,9 @@ This repository provides a do-it-yourself patch kit that adds individual VNAV de
 
 The LevelUp 737NG uses the Lua scripts and the plugin from Zibo's Boeing 737-800X project for its systems. While there are some provisions to account for the different 737 variants included in the LevelUp package (737-600, -700, -800, -900, -900ER), the VNAV descent distance calculation tables are exclusively for the 737-800. When used with another variant that is not an -800, these tables will lead to implausible autopilot behaviour on descent.
 
-Over the course of a conversation over the issue with Thomas W. (wahltho on X-Plane.org), he created variant-specific (737-600, -700, -800, 900, -900ER) descent distance tables, derived from a Flight Crew Operations Manual for the 737NG. He supplied this in form of a patch diff file for version 4.05.35 of _B738.a_fms.lua_. Because a patch diff for a static version of a file is not futureproof and because Thomas has no interest in supplying the descent tables in any other form or distributing them himself, I've tried to turn his patch into a form that is less reliant on a specific version of _B738.a_fms.lua_ and created this repository for distribution.
+Over the course of a conversation over the issue with Thomas W. (wahltho on X-Plane.org), he created variant-specific (737-600, -700, -800, 900, -900ER) descent distance tables, derived from a Flight Crew Operations Manual for the 737NG. This repository packages those tables as a Python-based installer, so users do not need to edit _B738.a_fms.lua_ with platform-specific diff tools.
 
-The patch will likely stay relevant until Zibo incorporates these tables into the _B738.a_fms.lua_ script by default.
+The installer will likely stay relevant until Zibo incorporates these tables into the _B738.a_fms.lua_ script by default.
 
 &nbsp;
 
@@ -22,7 +22,7 @@ The patch will likely stay relevant until Zibo incorporates these tables into th
 
 Before you install or use this, you **must** acknowledge that:
 - This only adds variant-specific descent distance calculation tables (Table: "Descent .78/280/25" in Boeing's FCOM) with wind corrections. Anything else in the FMS and autopilot system that is incorrect for non-800 variants in the LevelUp 737 Series is not touched or improved.  
-- This patch is unofficial, which means it is not supported by LevelUp or Zibo!  
+- This installer is unofficial, which means it is not supported by LevelUp or Zibo!
 - To avoid violating Zibo's copyright on the Lua files, _B738.a_fms.lua_ must be edited in order to use the VNAV descent tables (see the installation instructions). If you are not comfortable with that, **do not use this**!
 - **After each and every(!) update to _B738.a_fms.lua_, the installation (see below) must be repeated(!).**
 
@@ -39,13 +39,13 @@ In case the variant-specific descent calculation fails, Zibo's default VNAV desc
 
 This repository contains the following files and folders:
 - "Patch_Converter" folder:   
-Contains wahltho's original patch and a Python script that converts the patch file into _B738.a_fms_levelup_tables.lua_, _Add_to_take_alt_dist.txt_ and _Add_to_take_alt_dist_mach.txt_. This folder is not required for installation and usage and therefore not part of a release.
+Contains maintenance material for regenerating the installer source files from an older diff-based prototype. This folder is not required for installation and usage and therefore not part of a release.
 - _Add_to_take_alt_dist.txt_ and _Add_to_take_alt_dist_mach.txt_:    
 These files contain lines of code that must be added to _B738.a_fms.lua_. This is done automatically via Python script or via manual editing (see the installation instructions).
 - _B738.a_fms_levelup_tables.lua_:    
 This file contains the actual descent tables for the 737NG variants and must be present in the "B738.a_fms" folder.
 - _z_Install.py_:    
-A [Python](www.python.org) installation script that modifies _B738.a_fms.lua_ and will create a backup of it prior to modification.
+A [Python](www.python.org) installation script that modifies _B738.a_fms.lua_, preserves the file's existing LF/CRLF line endings, creates a backup before modification, avoids duplicate hook insertion, and runs `luac -p` when available.
 
 &nbsp;
 
@@ -59,10 +59,17 @@ A [Python](www.python.org) installation script that modifies _B738.a_fms.lua_ an
 	- _Add_to_take_alt_dist_mach.txt_
 	- (Optionally) _z_Install.py_
 	
-3) If you do not have [Python](www.python.org) installed, skip this step.      
-	Run _z_Install.py_, which will make a backup of _B738.a_fms.lua_ and perform all the required modifications for you. The installation is finished. Ignore step 4 below.
+3) Run _z_Install.py_, which will make a backup of _B738.a_fms.lua_ and perform all the required modifications for you. The installation is finished. Ignore step 4 below.
+
+	From a terminal in the _B738.a_fms_ folder:
+
+	```bash
+	python3 z_Install.py
+	```
+
+	On Windows, use `py z_Install.py` or `python z_Install.py` if `python3` is not available.
 	
-4) Make a backup of _B738.a_fms.lua_ before you begin.
+4) Manual installation is only the fallback if Python is not available. Make a backup of _B738.a_fms.lua_ before you begin.
 	- Open _B738.a_fms.lua_ with a text editor like Notepad or [Notepad++](https://notepad-plus-plus.org/) or similar.        
 	- Add the line      
 	```dofile("B738.a_fms_levelup_tables.lua")```      
@@ -95,6 +102,8 @@ After each and every update of Zibo's plugin and Lua scripts, you must perform i
 
 ## Troubleshooting
 
+If installation fails or behaves differently across operating systems, use _z_Install.py_ from a terminal instead of a text editor. The installer preserves the target file's line endings and checks for duplicate installation.
+
 When "LevelUp VNAV descent tables loaded!" does not appear in Log.txt, installation steps 3 or 4 went wrong or you forgot to perform these steps after an update to Zibo's Lua scripts.
 
 If there is a bug in the code for the new tables, _B738.a_fms.lua_ will at the earliest freeze during the VNAV calculations performed while preparing FMS on the ground. This will usually be accompanied by error messages in X-Plane's Developer Console or _Log.txt_. Check that all installation steps were performed correctly.
@@ -107,4 +116,4 @@ If VNAV descent works, but continues to exhibit lower than sensible vertical spe
 
 ## Credits
 
-Thomas Wahl (wahltho) for the implementation of the descent tables for the 737NG series and the original patch.
+Thomas Wahl (wahltho) for the implementation of the descent tables for the 737NG series.

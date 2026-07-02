@@ -372,7 +372,7 @@ function B738_variant_test_direct_segment(model, model_id, low_alt, high_alt)
 	if total_weight == nil then
 		return nil
 	end
-	local weight = total_weight / 2.20462
+	local weight = total_weight
 	local high_dist = B738_variant_test_interp_weighted_curve(table_ref, model.direct_alt, model.direct_weight, high_alt, weight)
 	local low_dist = B738_variant_test_interp_weighted_curve(table_ref, model.direct_alt, model.direct_weight, low_alt, weight)
 	if high_dist == nil or low_dist == nil then
@@ -448,7 +448,7 @@ function B738_variant_test_derived_segment(model, low_alt, high_alt)
 	if total_weight == nil then
 		return nil
 	end
-	local weight = total_weight / 2.20462
+	local weight = total_weight
 	local high_dist = B738_variant_test_derived_cumulative(model, high_alt, weight)
 	local low_dist = B738_variant_test_derived_cumulative(model, low_alt, weight)
 	if high_dist == nil or low_dist == nil then

@@ -1,2 +1,6 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Keep distributed text artifacts stable across macOS, Linux, and Windows.
+*.lua text eol=lf
+*.md text eol=lf
+*.patch text eol=lf
+*.py text eol=lf
+*.txt text eol=lf

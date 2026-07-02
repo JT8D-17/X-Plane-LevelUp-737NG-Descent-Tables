@@ -5,14 +5,11 @@ Generated: 2026-07-02 01:37:54 UTC
 
 ]]
 
--- BEGIN UPSTREAM VARIANT TEST: Zibo/LevelUp NG VNAV descent prototype
--- Documentation-only experiment.
--- Goal: source-backed clean descent geometry for Zibo 737-800X and LevelUp NG variants using the same data package as the C++ port.
+-- BEGIN UPSTREAM VARIANT TEST: LevelUp NG VNAV descent tables
+-- Goal: source-backed clean descent geometry for LevelUp NG variants using the same data package as the C++ port.
 -- Direct data: Documentation/levelup_vnav_descent_model/direct_descent_distance_tables.csv
 -- Derived data: Documentation/levelup_vnav_descent_model/known_model_data.csv
 -- Missing variant-specific data stays explicit: decel and non-clean flap descent are inherited from original Lua.
-
-B738_variant_test_zibo_800_variant = -1000
 
 -- LevelUp 737-600NG / CFM56-7B22
 raw_table('B738_variant_test_600_direct_alt')
@@ -142,15 +139,6 @@ B738_variant_test_900er_derived_076_280_dist_per_1000 = {
 }
 
 B738_variant_test_models = {
-	[B738_variant_test_zibo_800_variant] = {
-		label = 'Zibo 737-800X / CFM56-7B26',
-		direct_alt = B738_variant_test_800_direct_alt,
-		direct_weight = B738_variant_test_800_direct_weight,
-		direct_078_280_250 = B738_variant_test_800_direct_078_280_250,
-		derived_alt = B738_variant_test_800_derived_076_280_alt,
-		derived_weight = B738_variant_test_800_derived_076_280_weight,
-		derived_076_280 = B738_variant_test_800_derived_076_280_dist_per_1000,
-	},
 	[3] = {
 		label = 'LevelUp 737-600NG / CFM56-7B22',
 		direct_alt = B738_variant_test_600_direct_alt,
@@ -207,24 +195,11 @@ end
 
 function B738_variant_test_active_variant()
 	local b737_variant = B738_variant_test_number(B738DR_b737_variant)
-	local zibo_variant = B738_variant_test_number(B738DR_73x)
 	if b737_variant ~= nil then
 		local variant_id = math.floor(b737_variant + 0.5)
 		if B738_variant_test_models[variant_id] ~= nil then
 			return variant_id
 		end
-		if variant_id < 0 and zibo_variant == 0 then
-			return B738_variant_test_zibo_800_variant
-		end
-	end
-
-	-- Legacy upstream Lua fallback used when the LevelUp b737_variant dataref is
-	-- not present.
-	if b737_variant == nil and zibo_variant == 0 then
-		return B738_variant_test_zibo_800_variant
-	end
-	if b737_variant == nil and zibo_variant == 2 then
-		return 2
 	end
 
 	return nil
@@ -594,7 +569,7 @@ function B738_variant_test_take_alt_dist_mach(x_idx_alt, x_spd_alt, x_spd_wnd_al
 	end
 	return B738_variant_test_wind_correct(segment, x_spd_wnd_alt, high_alt)
 end
--- END UPSTREAM VARIANT TEST: Zibo/LevelUp NG VNAV descent prototype
+-- END UPSTREAM VARIANT TEST: LevelUp NG VNAV descent tables
 
 --[[END OF FILE]]
 print("LevelUp VNAV descent tables loaded!")

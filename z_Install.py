@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Install the LevelUp/Zibo NG VNAV descent table hooks into B738.a_fms.lua.
+Install the LevelUp-only NG VNAV descent table hooks into B738.a_fms.lua.
 
 The installer intentionally works on bytes for the target Lua file so it can
 preserve the user's existing LF or CRLF line endings. This avoids depending on
@@ -92,20 +92,6 @@ def add_insertion(
     print(f"{label}: found line {idx + 1}, will insert {len(content)} line(s).")
 
 
-def run_luac(path: Path) -> int:
-    luac = shutil.which("luac")
-    if not luac:
-        print("luac not found; syntax check skipped.")
-        return 0
-
-    result = subprocess.run([luac, "-p", str(path)], text=True, capture_output=True)
-    if result.returncode != 0:
-        print(result.stderr or result.stdout, file=sys.stderr)
-        return result.returncode
-    print("luac -p: OK")
-    return 0
-
-
 def main() -> int:
     for path in (LUA_FILE, TABLE_FILE, TABLE_FILE_ALT_DIST, TABLE_FILE_ALT_DIST_MACH):
         require_file(path)
@@ -147,12 +133,6 @@ def main() -> int:
 
     write_lines_preserving_eol(LUA_FILE, lua_lines, eol, has_final_eol)
     print(f"Installed {len(insertions)} hook block(s) into {LUA_FILE}.")
-
-    result = run_luac(LUA_FILE)
-    if result != 0:
-        LUA_FILE.write_bytes(original_data)
-        print("Syntax check failed; restored original B738.a_fms.lua.", file=sys.stderr)
-        return result
 
     return 0
 

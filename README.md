@@ -45,7 +45,7 @@ These files contain lines of code that must be added to _B738.a_fms.lua_. This i
 - _B738.a_fms_levelup_tables.lua_:    
 This file contains the actual descent tables for the 737NG variants and must be present in the "B738.a_fms" folder.
 - _z_Install.py_:    
-A [Python](www.python.org) installation script that modifies _B738.a_fms.lua_, preserves the file's existing LF/CRLF line endings, creates a backup before modification, avoids duplicate hook insertion, and runs `luac -p` when available.
+A [Python](www.python.org) installation script that modifies _B738.a_fms.lua_, preserves the file's existing LF/CRLF line endings, creates a backup before modification and avoids duplicate hook insertion.
 - "realbench_logger" folder:
 Contains the Realbench logging package for descent-profile test flights. The installation and usage instructions are inside the ZIP.
 

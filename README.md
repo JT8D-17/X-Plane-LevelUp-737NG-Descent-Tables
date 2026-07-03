@@ -24,7 +24,7 @@ Before you install or use this, you **must** acknowledge that:
 - This only adds variant-specific descent distance calculation tables (Table: "Descent .78/280/25" in Boeing's FCOM) with wind corrections. Anything else in the FMS and autopilot system that is incorrect for non-800 variants in the LevelUp 737 Series is not touched or improved.  
 - This installer is unofficial, which means it is not supported by LevelUp or Zibo!
 - To avoid violating Zibo's copyright on the Lua files, _B738.a_fms.lua_ must be edited in order to use the VNAV descent tables (see the installation instructions). If you are not comfortable with that, **do not use this**!
-- **After each and every(!) update to _B738.a_fms.lua_, the installation (see below) must be repeated(!).**
+- **After each and every(!) update to _B738.a_fms.lua_ by Zibo or the LevelUp team, the installation (see below) must be repeated(!).**
 
 &nbsp;
 

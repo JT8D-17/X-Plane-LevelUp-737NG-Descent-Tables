@@ -5,6 +5,10 @@ Generated: 2026-07-02 01:37:54 UTC
 
 ]]
 
+-- package-id|x-plane-levelup-737ng-vnav-descent-tables
+-- package-version|v0.2.0
+-- aircraft-family|levelup_737ng
+
 -- BEGIN UPSTREAM VARIANT TEST: LevelUp NG VNAV descent tables
 -- Goal: source-backed clean descent geometry for LevelUp NG variants using the same data package as the C++ port.
 -- Direct data: Documentation/levelup_vnav_descent_model/direct_descent_distance_tables.csv

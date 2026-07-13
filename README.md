@@ -40,10 +40,14 @@ In case the variant-specific descent calculation fails, Zibo's default VNAV desc
 This repository contains the following files and folders:
 - _Add_to_take_alt_dist.txt_ and _Add_to_take_alt_dist_mach.txt_:    
 These files contain lines of code that must be added to _B738.a_fms.lua_ and are the hooks that make the FMS use the variant specific descent tables. This is done automatically via Python script or via manual editing (see the installation instructions).
+- _Add_dofile.txt_:
+This file contains the marked `dofile()` block that loads the table file.
 - _B738.a_fms_levelup_tables.lua_:    
 This file contains the actual descent tables for the 737NG variants and must be present in the "B738.a_fms" folder.
+- _package-manifest.txt_:
+This file contains machine-readable package metadata for external tools.
 - _z_Install.py_:    
-A [Python](www.python.org) installation script that modifies _B738.a_fms.lua_, preserves the file's existing LF/CRLF line endings, creates a backup before modification and avoids duplicate hook insertion.
+A [Python](www.python.org) installation script that modifies _B738.a_fms.lua_, preserves the file's existing LF/CRLF line endings, creates a backup before modification, installs marked hook blocks and migrates older unmarked installations without duplicate hook insertion.
 
 &nbsp;
 
@@ -59,8 +63,10 @@ A [Python](www.python.org) installation script that modifies _B738.a_fms.lua_, p
 
 2) Move these files into the _737NG Series_V2(...)/plugins/xlua/scripts/B738.a_fms_ folder:
 	- _B738.a_fms_levelup_tables.lua_
+	- _Add_dofile.txt_
 	- _Add_to_take_alt_dist.txt_
 	- _Add_to_take_alt_dist_mach.txt_
+	- _package-manifest.txt_
 	- (Optional, but highly recommended) _z_Install.py_
 	
 3) Run _z_Install.py_, which will make a backup of _B738.a_fms.lua_ and perform all the required modifications for you. The installation is finished. Ignore step 4 below.	From a terminal/console in the _B738.a_fms_ folder:
@@ -73,9 +79,7 @@ A [Python](www.python.org) installation script that modifies _B738.a_fms.lua_, p
 	
 4) Manual installation is only the fallback if Python is not available. Make a backup of _B738.a_fms.lua_ before you begin.
 	- Open _B738.a_fms.lua_ with a text editor like Notepad or [Notepad++](https://notepad-plus-plus.org/) or similar.        
-	- Add the line      
-	```dofile("B738.a_fms_levelup_tables.lua")```      
- below `jit.off()`.    
+	- Add all the lines from _Add_dofile.txt_ directly below `jit.off()`.
 	- Add all the lines from _Add_to_take_alt_dist.txt_ directly below   
 `function take_alt_dist(x_idx_alt, x_spd_alt, x_spd_wnd_alt, x_flap)`    
  (Caution: The line must **not** start with a Lua comment mark (`--`, i.e. double dash)!!)    
@@ -108,6 +112,16 @@ Simply overwrite _B738.a_fms_levelup_tables.lua_.
 
 3) The FMS table hooks have been updated, but not Zibo's scripts:      
 Delete _B738.a_fms.lua_ and rename _B738.a_fms.backup_ to _B738.a_fms.lua_, then check that the files from installation step 2 are present and perform installation steps 3 or 4.
+
+&nbsp;
+
+## Machine-Readable Package Metadata
+
+This package includes _package-manifest.txt_ for external tools that need to identify, verify or install the release payloads without relying on the human-readable README.
+
+The manifest lists the package ID, package version, release tag, aircraft family, repository URL, target Lua path, payload filenames, file sizes, SHA-256 hashes, patch anchors, stable block markers and legacy hook signatures.
+
+The manifest does not bind the package to a hash of the complete upstream _B738.a_fms.lua_, because that file can legitimately change with aircraft updates.
 
 &nbsp;
 

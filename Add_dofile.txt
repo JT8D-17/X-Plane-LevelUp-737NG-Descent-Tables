@@ -1,0 +1,5 @@
+-- BEGIN LEVELUP_VNAV_DESCENT_TABLES DOFILE
+-- package-id|x-plane-levelup-737ng-vnav-descent-tables
+-- package-version|v0.2.0
+dofile("B738.a_fms_levelup_tables.lua")
+-- END LEVELUP_VNAV_DESCENT_TABLES DOFILE

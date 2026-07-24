@@ -51,7 +51,7 @@ A [Python](www.python.org) installation script that modifies _B738.a_fms.lua_, p
 
 &nbsp;
 
-## Req	uirements
+## Requirements
 
 - The [LevelUp 737NG Series (v2)](https://forum.thresholdx.net/files/file/4108-737ng-series-for-x-plane-12/)
 - Optional, but highly recommended for an automated installation (see below): An installation of [Python](www.python.org) .
@@ -102,7 +102,7 @@ Delete the modified _B738.a_fms.lua_ file and restore the backup that was create
 
 ## Dealing with Updates
 
-There a three cases that might apply.
+There are three cases that might apply.
 
 1) Zibo's plugins and scripts have been updated:    
 Install Zibo's new plugin and scripts, then make sure that the files from installation step 2 are still present in _plugins/xlua/scripts/B738.a_fms_ (but delete _B738.a_fms.backup_, if still present) and perform installation steps 3 or 4.
